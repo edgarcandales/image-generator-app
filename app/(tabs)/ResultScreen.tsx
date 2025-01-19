@@ -1,74 +1,61 @@
-import { OPENAI_API_KEY } from '@env'; // Import the API key from the .env file
-import axios from 'axios';
-import { useLocalSearchParams } from 'expo-router'; // Correct hook for fetching parameters
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Image, StyleSheet, Text, View } from 'react-native';
+import { ThemedButton } from '@/components/ThemedButton';
+import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React from 'react';
+import { ActivityIndicator, Image, StyleSheet } from 'react-native';
+import { useGenerateImage } from '../../hooks/useGenerateImage';
 
 export default function ResultScreen() {
-  const { prompt } = useLocalSearchParams(); // Use correct hook
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const fetchGeneratedImage = async () => {
-      if (!prompt) {
-        Alert.alert('Error', 'No prompt provided.');
-        setLoading(false);
-        return;
-      }
-      try {
-        // Make a request to the OpenAI API
-        const response = await axios.post(
-          'https://api.openai.com/v1/images/generations',
-          {
-            //model: 'image-alpha-001',
-            prompt, // User's input prompt
-            n: 1, // Number of images to generate
-            size: '512x512', // Image dimensions
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${OPENAI_API_KEY}`, // API Key from .env
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-
-        const generatedImageUrl = response.data.data[0].url; // Get the generated image URL
-        setImageUrl(generatedImageUrl);
-      } catch (error) {
-        Alert.alert('Error', 'Failed to generate image. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGeneratedImage();
-  }, [prompt]);
+  const { prompt } = useLocalSearchParams();
+  const { imageUrl, loading } = useGenerateImage(prompt as string | null);
+  const router = useRouter();
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text style={styles.text}>Generating your image...</Text>
-      </View>
+      <ThemedView style={styles.container}>
+        <ActivityIndicator size="large" color="#0a7ea4" />
+        <ThemedText type="subtitle" style={styles.text}>
+          Generating your image...
+        </ThemedText>
+      </ThemedView>
     );
   }
 
   if (!imageUrl) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.error}>Failed to load the image. Please try again.</Text>
-      </View>
+      <ThemedView style={styles.container}>
+        <ThemedText type="error" style={styles.error}>
+          Failed to load the image. Please try again.
+        </ThemedText>
+        <ThemedButton
+          title="Back to Home"
+          onPress={() => {
+            router.push('/');
+          }}
+          style={styles.button}
+        />
+      </ThemedView>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Generated Image for:</Text>
-      <Text style={styles.prompt}>{prompt}</Text>
+    <ThemedView style={styles.container}>
+      <ThemedText type="title" style={styles.text}>
+        Generated Image
+      </ThemedText>
+      <ThemedText type="subtitle" style={styles.prompt}>
+        Prompt: {prompt}
+      </ThemedText>
       <Image source={{ uri: imageUrl }} style={styles.image} />
-    </View>
+      <ThemedButton
+        title="Generate Another"
+        onPress={() => {
+          router.push('/');
+        }}
+        style={styles.button}
+      />
+    </ThemedView>
   );
 }
 
@@ -80,22 +67,30 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   text: {
-    fontSize: 18,
-    marginBottom: 8,
+    marginBottom: 16,
+    textAlign: 'center',
   },
   prompt: {
-    fontSize: 16,
     fontStyle: 'italic',
     marginBottom: 16,
+    textAlign: 'center',
   },
   image: {
     width: 300,
     height: 300,
     resizeMode: 'contain',
+    marginBottom: 16,
   },
   error: {
     fontSize: 16,
     color: 'red',
     textAlign: 'center',
+    marginBottom: 16,
+  },
+  button: {
+    marginTop: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
   },
 });
