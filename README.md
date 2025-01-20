@@ -1,50 +1,68 @@
-# Welcome to your Expo app 👋
+# **DALL·E Image Generator App**
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This project is a React Native application that allows users to generate images using the OpenAI DALL·E API. Users can input a prompt, and the app generates an image based on the description provided.
 
-## Get started
+---
 
-1. Install dependencies
+## **Features**
 
+- Input custom text prompts to generate images.
+- Uses OpenAI's DALL·E API for image generation.
+- Displays the generated image in a user-friendly interface.
+- Built with React Native and Expo for cross-platform compatibility.
+
+---
+
+## **Technologies Used**
+
+- **React Native**: Framework for building mobile apps.
+- **Expo**: Simplifies development, testing, and deployment.
+- **Axios**: For making HTTP requests to the OpenAI API.
+- **OpenAI API**: Integration for DALL·E image generation.
+
+---
+
+## **Prerequisites**
+
+Before you can run this project, ensure you have the following installed:
+
+1. **Node.js** (version 14 or higher)
+2. **Expo CLI**:
+   ```bash
+   npm install -g expo-cli
+   ```
+
+## **Setup Instructions**
+
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/your-username/dalle-image-generator.git
+   cd dalle-image-generator
+   ```
+2. **Install Dependencies:**:
    ```bash
    npm install
    ```
-
-2. Start the app
-
+3. **Add Environment Variables:**:
    ```bash
-    npx expo start
+   OPENAI_API_KEY=your_openai_api_key_here
    ```
 
-In the output, you'll find options to open the app in a
+---
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### **Usage**
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+```markdown
+## **Usage**
 
-## Get a fresh project
+1. **Input a Prompt**:
 
-When you're ready, run:
+   - Enter a description in the input field (e.g., _"A futuristic city at sunset"_).
 
-```bash
-npm run reset-project
+2. **Generate an Image**:
+
+   - Tap "Generate" to fetch an image from OpenAI's DALL·E API.
+
+3. **View the Result**:
+   - The generated image appears on the result screen.
 ```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.

@@ -7,8 +7,8 @@ import React, { useState } from 'react';
 import { Alert, StyleSheet } from 'react-native';
 
 export default function HomeScreen() {
-  const [prompt, setPrompt] = useState(''); // State to track user input
-  const router = useRouter(); // Expo Router navigation
+  const [prompt, setPrompt] = useState('');
+  const router = useRouter();
 
   const handleGenerate = () => {
     if (!prompt.trim()) {
@@ -16,7 +16,6 @@ export default function HomeScreen() {
       return;
     }
 
-    // Navigate to ResultScreen with the prompt
     router.push({ pathname: '/ResultScreen', params: { prompt } });
     setPrompt('')
   };

@@ -7,15 +7,14 @@ import { ActivityIndicator, Image, StyleSheet } from 'react-native';
 import { useGenerateImage } from '../../hooks/useGenerateImage';
 
 export default function ResultScreen() {
-  const { prompt } = useLocalSearchParams(); // Fetch prompt from navigation params
+  const { prompt } = useLocalSearchParams();
   const router = useRouter();
 
   // Manage local states
-  const { imageUrl, loading } = useGenerateImage(prompt as string | null); // Fetch image based on prompt
-  const [imageLoading, setImageLoading] = useState(true); // Track image loading state
+  const { imageUrl, loading } = useGenerateImage(prompt as string | null);
+  const [imageLoading, setImageLoading] = useState(true);
 
   const handleGenerateAnother = () => {
-    // Navigate back to HomeScreen to allow new input
     setImageLoading(true);
     router.push('/');
   };
@@ -55,7 +54,6 @@ export default function ResultScreen() {
         Prompt: {prompt}
       </ThemedText>
 
-      {/* Image with placeholder */}
       <ThemedView style={styles.imageWrapper}>
         {imageLoading && (
           <ActivityIndicator size="large" color="#0a7ea4" style={styles.imageLoader} />
