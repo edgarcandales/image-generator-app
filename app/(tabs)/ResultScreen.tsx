@@ -2,21 +2,30 @@ import { ThemedButton } from '@/components/ThemedButton';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React from 'react';
+import React, { useState } from 'react';
 import { ActivityIndicator, Image, StyleSheet } from 'react-native';
 import { useGenerateImage } from '../../hooks/useGenerateImage';
 
 export default function ResultScreen() {
-  const { prompt } = useLocalSearchParams();
-  const { imageUrl, loading } = useGenerateImage(prompt as string | null);
+  const { prompt } = useLocalSearchParams(); // Fetch prompt from navigation params
   const router = useRouter();
+
+  // Manage local states
+  const { imageUrl, loading } = useGenerateImage(prompt as string | null); // Fetch image based on prompt
+  const [imageLoading, setImageLoading] = useState(true); // Track image loading state
+
+  const handleGenerateAnother = () => {
+    // Navigate back to HomeScreen to allow new input
+    setImageLoading(true);
+    router.push('/');
+  };
 
   if (loading) {
     return (
-      <ThemedView style={styles.container}>
+      <ThemedView style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0a7ea4" />
-        <ThemedText type="subtitle" style={styles.text}>
-          Generating your image...
+        <ThemedText type="subtitle" style={styles.loadingText}>
+          Hold tight! We're creating your masterpiece...
         </ThemedText>
       </ThemedView>
     );
@@ -24,73 +33,124 @@ export default function ResultScreen() {
 
   if (!imageUrl) {
     return (
-      <ThemedView style={styles.container}>
-        <ThemedText type="error" style={styles.error}>
-          Failed to load the image. Please try again.
+      <ThemedView style={styles.errorContainer}>
+        <ThemedText type="error" style={styles.errorText}>
+          Oops! We couldn’t generate the image. Please try again.
         </ThemedText>
         <ThemedButton
           title="Back to Home"
-          onPress={() => {
-            router.push('/');
-          }}
-          style={styles.button}
+          onPress={handleGenerateAnother}
+          style={styles.errorButton}
         />
       </ThemedView>
     );
   }
 
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText type="title" style={styles.text}>
-        Generated Image
+    <ThemedView style={styles.resultContainer}>
+      <ThemedText type="title" style={styles.resultTitle}>
+        Your Generated Image
       </ThemedText>
-      <ThemedText type="subtitle" style={styles.prompt}>
+      <ThemedText type="subtitle" style={styles.resultPrompt}>
         Prompt: {prompt}
       </ThemedText>
-      <Image source={{ uri: imageUrl }} style={styles.image} />
+
+      {/* Image with placeholder */}
+      <ThemedView style={styles.imageWrapper}>
+        {imageLoading && (
+          <ActivityIndicator size="large" color="#0a7ea4" style={styles.imageLoader} />
+        )}
+        <Image
+          source={{ uri: imageUrl }}
+          style={[styles.resultImage, imageLoading && styles.hiddenImage]}
+          onLoadEnd={() => setImageLoading(false)} // Hide loader once image is loaded
+        />
+      </ThemedView>
+
       <ThemedButton
         title="Generate Another"
-        onPress={() => {
-          router.push('/');
-        }}
-        style={styles.button}
+        onPress={handleGenerateAnother} // Reset and navigate back
+        style={styles.generateButton}
       />
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
+    backgroundColor: '#f4f8fb',
   },
-  text: {
+  loadingText: {
+    marginTop: 20,
+    fontSize: 18,
+    textAlign: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#fff5f5',
+  },
+  errorText: {
+    marginBottom: 16,
+    fontSize: 18,
+    textAlign: 'center',
+  },
+  errorButton: {
+    marginTop: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+    backgroundColor: '#ff4d4d',
+  },
+  resultContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#f7faff',
+  },
+  resultTitle: {
     marginBottom: 16,
     textAlign: 'center',
   },
-  prompt: {
+  resultPrompt: {
     fontStyle: 'italic',
     marginBottom: 16,
     textAlign: 'center',
   },
-  image: {
-    width: 300,
-    height: 300,
+  imageWrapper: {
+    width: 320,
+    height: 320,
+    marginBottom: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  imageLoader: {
+    position: 'absolute',
+    zIndex: 1,
+  },
+  hiddenImage: {
+    opacity: 0,
+  },
+  resultImage: {
+    width: '100%',
+    height: '100%',
     resizeMode: 'contain',
-    marginBottom: 16,
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: '#d1e7f3',
   },
-  error: {
-    fontSize: 16,
-    color: 'red',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  button: {
-    marginTop: 16,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
+  generateButton: {
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    borderRadius: 12,
+    backgroundColor: '#1d72b8',
   },
 });
